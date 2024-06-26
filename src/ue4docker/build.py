@@ -86,6 +86,16 @@ def build():
             )
             sys.exit(1)
 
+    # Warn the user if they're using an older version of Docker that can't build or run UE 5.4 Linux images without config changes
+    if (
+        config.containerPlatform == "linux"
+        and DockerUtils.isVersionWithoutIPV6Loopback()
+    ):
+        logger.warning(
+            DockerUtils.getIPV6WarningMessage() + "\n",
+            False,
+        )
+
     # Create an auto-deleting temporary directory to hold our build context
     with tempfile.TemporaryDirectory() as tempDir:
         contextOrig = join(os.path.dirname(os.path.abspath(__file__)), "dockerfiles")
